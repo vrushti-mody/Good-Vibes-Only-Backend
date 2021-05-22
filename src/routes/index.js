@@ -31,7 +31,7 @@ const routes = (app) => {
       }
     }
   );
-
+ 
   app.post(
     "/settings",async(req, res)=>{
       const { name, email, about} = req.body;
@@ -41,6 +41,21 @@ const routes = (app) => {
         about: about
       })
       return res.status(200).send({ message: "Changes Successful" });
+      }
+      catch(e){
+        return res.status(404).send({ message: "Something went wrong!" });
+      }
+    }
+  );
+
+  app.get(
+    "/posts",async(req, res)=>{
+    
+      try{
+        const posts = await Upload.aggregate([
+          { $sample: { size: 10 } }
+      ])
+      return res.status(200).send({ posts, message: "Fetching Successful" });
       }
       catch(e){
         return res.status(404).send({ message: "Something went wrong!" });
