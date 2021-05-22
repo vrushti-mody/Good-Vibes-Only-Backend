@@ -4,21 +4,6 @@ import { User } from "../db/models/user";
 
 const GoogleTokenStrategy = require("passport-google-token").Strategy;
 
-config();
-
-const getProfile = (profile) => {
-  const { id, displayName, emails, provider } = profile;
-  if (emails?.length) {
-    const email = emails[0].value;
-    return {
-      googleId: id,
-      name: displayName,
-      email,
-      provider,
-    };
-  }
-  return null;
-};
 
 passport.use(
   new GoogleTokenStrategy(
@@ -36,7 +21,7 @@ passport.use(
        
             const newAccount = new User({
               name: profile.displayName,
-              email: profile.email,
+              email: profile.emails[0].value,
               about:"Hi there! I love to spread good vibes"
             })
             newAccount.save()
