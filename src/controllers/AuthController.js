@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 const User = require("../db/models/user");
+require("dotenv").config();
 
 const AuthController = {
   async googleLogin(req, res, next) {
