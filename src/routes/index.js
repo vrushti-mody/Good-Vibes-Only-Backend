@@ -20,7 +20,7 @@ const routes = (app) => {
       const upload = new Upload({
         name,
         text,
-        iamge,
+        image,
       });
       upload.save();
       return res.status(200).send({ message: "Upload Successful" });
