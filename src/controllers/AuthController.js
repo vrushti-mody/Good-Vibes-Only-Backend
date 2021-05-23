@@ -7,10 +7,11 @@ const AuthController = {
     if (!req.user) {
       return res.status(401).send({ error: "User was not authenticated" });
     }
-    const { email } = req.user;
-    const user = await User.findOne({ where: { email } });
-    const token = jwt.sign(user.id, process.env.JWT_SECRET);
-    return res.status(200).send({ token, user });
+    // const { email } = req.user;
+    console.log(req.user);
+    // const user = await User.findOne({ where: { email } });
+    // const token = jwt.sign(user.id, process.env.JWT_SECRET);
+    return res.status(200).send({ email });
   },
 };
 
