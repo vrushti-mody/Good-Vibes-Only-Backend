@@ -2,8 +2,7 @@ import passport from "passport";
 import { config } from "dotenv";
 import { User } from "../db/models/user";
 
-const GoogleTokenStrategy = require("passport-google-token").Strategy;
-
+const GoogleTokenStrategy = require("passport-google-oauth-token");
 
 passport.use(
   new GoogleTokenStrategy(
@@ -12,24 +11,9 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(profile)
+      console.log("working");
       try {
-        const existingGoogleAccount = await User.findOne({
-          where: { googleId: profile.id },
-        });
-
-        if (!existingGoogleAccount) {
-       
-            const newAccount = new User({
-              name: profile.displayName,
-              email: profile.emails[0].value,
-              about:"Hi there! I love to spread good vibes"
-            })
-            newAccount.save()
-            return done(null, newAccount);
-          }
-          
-        return done(null, existingGoogleAccount);
+        return done(null, profile);
       } catch (error) {
         throw new Error(error);
       }
