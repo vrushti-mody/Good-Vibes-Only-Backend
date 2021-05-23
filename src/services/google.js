@@ -1,9 +1,8 @@
 import passport from "passport";
 import { config } from "dotenv";
-import { User } from "../db/models/user";
+const User  = require("../db/models/user");
 
-const GoogleTokenStrategy = require("passport-google-token").Strategy;
-
+const GoogleTokenStrategy = require("passport-google-oauth-token");
 
 passport.use(
   new GoogleTokenStrategy(
@@ -12,22 +11,26 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
     async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
+      const { displayName, emails } = profile;
+      const email = emails[0].value;
       try {
         const existingGoogleAccount = await User.findOne({
-          where: { googleId: profile.id },
+          where: { email: email },
         });
-
         if (!existingGoogleAccount) {
-       
-            const newAccount = new User({
-              name: profile.displayName,
-              email: profile.emails[0].value,
-              about:"Hi there! I love to spread good vibes"
-            })
-            newAccount.save()
-            return done(null, newAccount);
-          }
-          
+          const user= new User({
+            name:displayName,
+            email:email,
+            about: 'Hi there! I like to spread some good vibes!',
+          });
+          await user.save()
+          const newUser = await User.findOne({
+            where: { email: email },
+          });
+          return done(null, newUser);
+        }
+
         return done(null, existingGoogleAccount);
       } catch (error) {
         throw new Error(error);
